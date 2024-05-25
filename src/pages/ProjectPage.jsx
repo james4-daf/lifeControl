@@ -55,6 +55,7 @@ function ProjectPage() {
 
   const deleteProject = async () => {
     const { error } = await supabase.from('projects').delete().eq('id', id);
+    f;
     if (error) {
       console.error('Error deleting project:', error);
     } else {
@@ -68,6 +69,11 @@ function ProjectPage() {
     setIsOpen(true);
   };
 
+  const exitDialog = () => {
+    setIsOpen(false);
+    setIsDelete(false);
+  };
+
   if (!project) return <div>Loading...</div>;
 
   return (
@@ -77,12 +83,12 @@ function ProjectPage() {
       <button className="w-16 h-10" onClick={openDialog}>
         <Settings />
       </button>
-      <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+      <Dialog open={isOpen} onClose={() => exitDialog()}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 relative">
             <button
               className="absolute top-0 right-0 bg-red-200"
-              onClick={() => setIsOpen(false)}
+              onClick={() => exitDialog()}
             >
               <X />
             </button>

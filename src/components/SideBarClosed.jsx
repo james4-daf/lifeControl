@@ -9,7 +9,7 @@ function SideBarClosed({ setIsSidebarOpen }) {
         <nav className="h-full border-r-4">
           <div className="my-8">
             <div className="flex flex-basis my-8">
-              <div>
+              <div className="cursor-pointer">
                 <PanelLeftOpen
                   onClick={() => setIsSidebarOpen((prev) => !prev)}
                 />

@@ -1,67 +1,51 @@
-import { useEffect, useState } from 'react';
-// import { createClient } from '@supabase/supabase-js';
+import { useEffect, useState, useContext } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import AddProject from './AddProject';
 import { getProjects } from '../util/supabaseCalls';
-
-// const supabase = createClient(
-//   'https://raqgqzouznstksdksmsl.supabase.co',
-//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcWdxem91em5zdGtzZGtzbXNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY0OTUxMzYsImV4cCI6MjAzMjA3MTEzNn0.DAsoroYb_z_JFdkizcRil-dVLjZbLF2zVQKhC5ACrYU',
-// );
+import { UserProjectsContext } from '../context/UserProjectContext';
 
 function Projects() {
-  const { user } = useUser();
+  const { userProjects, setUserProjects, updateProjects, user } =
+    useContext(UserProjectsContext);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const userId = user.id;
-  //console.log(userId);
-  const [userProjects, setUserProjects] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchUserProjects = async () => {
-  //     try {
-  //       const data = await getProjects(userId);
-  //       setUserProjects(data);
-  //     } catch (error) {
-  //       console.error('Error fetching projects:', error);
-  //     }
-  //   };
-
-  //   fetchUserProjects();
-  // }, []);
-
-  useEffect(() => {
-    updateProjects(user.id);
-  }, [user.id]);
-
-  const updateProjects = async (userId) => {
-    const projects = await getProjects(userId);
-    setUserProjects(projects);
-  };
-
-  //console.log(userProjects);
   return (
-    <div>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold text-center mb-6">Your Projects</h1>
       {userProjects.length > 0 ? (
         <ul>
           {userProjects?.map((project) => (
-            <li key={project.id}>
-              <Link to={`/projects/${project.id}`}>{project.projectname}</Link>
+            <li
+              key={project.id}
+              className="border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+            >
+              <Link className="text-inherit " to={`/projects/${project.id}`}>
+                {project.projectname}
+              </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <p>You have no projects</p>
+        <p className="text-center text-gray-500">You have no projects</p>
       )}
-      {!showProjectForm && (
-        <button onClick={() => setShowProjectForm(true)}>AddProject</button>
-      )}
-      {showProjectForm && (
-        <AddProject
-          setShowProjectForm={setShowProjectForm}
-          updateProjects={updateProjects}
-        />
-      )}
+      <div className="text-center mt-6">
+        {!showProjectForm && (
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200"
+            onClick={() => setShowProjectForm(true)}
+          >
+            AddProject
+          </button>
+        )}
+        {showProjectForm && (
+          <AddProject
+            setShowProjectForm={setShowProjectForm}
+            updateProjects={updateProjects}
+          />
+        )}
+      </div>
     </div>
   );
 }
