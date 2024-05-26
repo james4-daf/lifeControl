@@ -1,26 +1,43 @@
 import React from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { UserProjectsContext } from '../../context/UserProjectContext';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { Blocks, ChevronDown, ChevronUp } from 'lucide-react';
 
 function ProjectsSideBar() {
+  const [expandedProjects, setExpandedProjects] = useState(false);
   const { userProjects, setUserProjects, updateProjects, user } =
     useContext(UserProjectsContext);
   return (
     <div>
-      {userProjects.length > 0 ? (
-        <ul>
-          {userProjects?.map((project) => (
-            <li key={project.id}>
-              <Link className="text-inherit" to={`/projects/${project.id}`}>
-                {project.projectname}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>You have no projects</p>
-      )}
+      <div className="flex relative">
+        <Blocks />
+        <NavLink to="/projects"> Projects</NavLink>
+        <div className="absolute top-0 right-0 cursor-pointer">
+          {expandedProjects ? (
+            <ChevronUp onClick={() => setExpandedProjects((prev) => !prev)} />
+          ) : (
+            <ChevronDown onClick={() => setExpandedProjects((prev) => !prev)} />
+          )}
+        </div>
+      </div>
+      {expandedProjects &&
+        (userProjects.length > 0 ? (
+          <ul>
+            {userProjects?.map((project) => (
+              <li key={project.project_id}>
+                <Link
+                  className="text-inherit"
+                  to={`/projects/${project.project_id}`}
+                >
+                  {project.projectname}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>You have no projects</p>
+        ))}
     </div>
   );
 }

@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '../util/supabaseCalls';
+import { getProjects, supabase } from '../util/supabaseCalls';
 import { X } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Settings } from 'lucide-react';
+import { UserProjectsContext } from '../context/UserProjectContext';
 import {
   Description,
   Dialog,
@@ -12,6 +15,8 @@ import {
 } from '@headlessui/react';
 
 function ProjectPage() {
+  const { userProjects, setUserProjects, updateProjects, user } =
+    useContext(UserProjectsContext);
   const navigate = useNavigate();
   const { id } = useParams(); // Get the project ID from the URL
   const [project, setProject] = useState(null);
@@ -24,7 +29,7 @@ function ProjectPage() {
       const { data, error } = await supabase
         .from('projects')
         .select()
-        .eq('id', id)
+        .eq('project_id', id)
         .single();
 
       if (error) {
@@ -43,24 +48,33 @@ function ProjectPage() {
     const { error } = await supabase
       .from('projects')
       .update({ projectname: newProjectName })
-      .eq('id', id);
+      .eq('project_id', id);
 
     if (error) {
       console.error('Error updating project name:', error);
     } else {
       setIsOpen(false);
       setProject({ ...project, projectname: newProjectName }); // Update project state with new name
+      toast.success(`Project name updated to ${newProjectName}`, {
+        position: 'top-right',
+      });
     }
   };
 
   const deleteProject = async () => {
-    const { error } = await supabase.from('projects').delete().eq('id', id);
-    f;
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('project_id', id);
     if (error) {
       console.error('Error deleting project:', error);
     } else {
-      // Navigate back to the projects page after deletion
+      const data = await getProjects(user.id);
+      setUserProjects(data);
       navigate('/projects');
+      toast.success(`Project has been deleted`, {
+        position: 'top-right',
+      });
     }
   };
 
@@ -129,6 +143,7 @@ function ProjectPage() {
           </DialogPanel>
         </div>
       </Dialog>
+      <ToastContainer autoClose={2000} position="bottom-right" />
     </div>
   );
 }

@@ -1,5 +1,10 @@
 import React from 'react';
-import { SquareArrowLeft, Blocks, CircleUserRound } from 'lucide-react';
+import {
+  SquareArrowLeft,
+  Blocks,
+  CircleUserRound,
+  ChevronDown,
+} from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { SignOutButton } from '@clerk/clerk-react';
 import ProjectsSideBar from './Sidebar/ProjectsSideBar';
@@ -21,10 +26,6 @@ function SideBarOpen({ setIsSidebarOpen }) {
           </div>
           <div className="flex flex-basis">
             <div className="basis-4/5"></div>
-          </div>
-          <div className="flex">
-            <Blocks />
-            <NavLink to="/projects"> Projects</NavLink>
           </div>
           <ProjectsSideBar />
           <div className="absolute inset-x-1 bottom-1">

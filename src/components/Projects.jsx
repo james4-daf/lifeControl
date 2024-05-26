@@ -10,6 +10,7 @@ function Projects() {
     useContext(UserProjectsContext);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const userId = user.id;
+  // console.log(userProjects);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -18,10 +19,13 @@ function Projects() {
         <ul>
           {userProjects?.map((project) => (
             <li
-              key={project.id}
+              key={project.project_id}
               className="border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
             >
-              <Link className="text-inherit " to={`/projects/${project.id}`}>
+              <Link
+                className="text-inherit "
+                to={`/projects/${project.project_id}`}
+              >
                 {project.projectname}
               </Link>
             </li>
