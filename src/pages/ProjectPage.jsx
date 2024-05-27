@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProjects, supabase } from '../util/supabaseCalls';
+import { getProjects, supabase, getProjectTasks } from '../util/supabaseCalls';
 import { X } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Settings } from 'lucide-react';
 import { UserProjectsContext } from '../context/UserProjectContext';
-import {
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from '@headlessui/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import TasksView from '../components/Tasks/TasksView';
 
 function ProjectPage() {
-  const { userProjects, setUserProjects, updateProjects, user } =
+  const { setUserProjects, user, setProjectTasks } =
     useContext(UserProjectsContext);
   const navigate = useNavigate();
   const { id } = useParams(); // Get the project ID from the URL
@@ -38,8 +34,13 @@ function ProjectPage() {
         setProject(data);
       }
     };
+    const fetchTasks = async () => {
+      const data = await getProjectTasks(id);
+      setProjectTasks(data);
+    };
 
     fetchProject();
+    fetchTasks();
   }, [id]);
 
   const handleUpdateProjectName = async (e) => {
@@ -91,59 +92,63 @@ function ProjectPage() {
   if (!project) return <div>Loading...</div>;
 
   return (
-    <div className="flex items-start p-4">
-      <h1 className="text-2xl font-bold">{project.projectname}</h1>
+    <div>
+      <div className="flex items-start p-4">
+        <h1 className="text-2xl font-bold">{project.projectname}</h1>
 
-      <button className="w-16 h-10" onClick={openDialog}>
-        <Settings />
-      </button>
-      <Dialog open={isOpen} onClose={() => exitDialog()}>
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 relative">
-            <button
-              className="absolute top-0 right-0 bg-red-200"
-              onClick={() => exitDialog()}
-            >
-              <X />
-            </button>
+        <button className="w-16 h-10" onClick={openDialog}>
+          <Settings />
+        </button>
 
-            <DialogTitle className="font-bold">Project Settings</DialogTitle>
-            <form onSubmit={handleUpdateProjectName}>
-              <input
-                className=" border p-2 rounded"
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-              />
-              <button type="submit">Save</button>
-            </form>
-            {!isDelete && (
+        <Dialog open={isOpen} onClose={() => exitDialog()}>
+          <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+            <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 relative">
               <button
-                type="button"
-                className="bg-red-100"
-                onClick={() => setIsDelete(true)}
+                className="absolute top-0 right-0 bg-red-200"
+                onClick={() => exitDialog()}
               >
-                Delete project
+                <X />
               </button>
-            )}
-            {isDelete && (
-              <div className="flex gap-4">
-                <p>Are you sure you want to delete this project?</p>
-                <button type="button" onClick={() => setIsDelete(false)}>
-                  Cancel
-                </button>
+
+              <DialogTitle className="font-bold">Project Settings</DialogTitle>
+              <form onSubmit={handleUpdateProjectName}>
+                <input
+                  className=" border p-2 rounded"
+                  value={newProjectName}
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                />
+                <button type="submit">Save</button>
+              </form>
+              {!isDelete && (
                 <button
-                  type="submit"
-                  className="bg-red-600"
-                  onClick={deleteProject}
+                  type="button"
+                  className="bg-red-100"
+                  onClick={() => setIsDelete(true)}
                 >
                   Delete project
                 </button>
-              </div>
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-      <ToastContainer autoClose={2000} position="bottom-right" />
+              )}
+              {isDelete && (
+                <div className="flex gap-4">
+                  <p>Are you sure you want to delete this project?</p>
+                  <button type="button" onClick={() => setIsDelete(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-red-600"
+                    onClick={deleteProject}
+                  >
+                    Delete project
+                  </button>
+                </div>
+              )}
+            </DialogPanel>
+          </div>
+        </Dialog>
+        <ToastContainer autoClose={2000} position="bottom-right" />
+      </div>
+      <TasksView />
     </div>
   );
 }

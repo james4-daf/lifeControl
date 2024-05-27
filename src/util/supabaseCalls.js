@@ -9,5 +9,22 @@ export async function getProjects(userId) {
     .from('projects')
     .select()
     .eq('user_id', userId);
-  return data;
+  if (error) {
+    console.error('Error fetching projects:', error);
+  } else {
+    return data;
+  }
+}
+
+export async function getProjectTasks(projectId) {
+  const { data, error } = await supabase
+    .from('tasks')
+    .select()
+    .eq('project_id', projectId);
+
+  if (error) {
+    console.error('Error fetching tasks:', error);
+  } else {
+    return data;
+  }
 }

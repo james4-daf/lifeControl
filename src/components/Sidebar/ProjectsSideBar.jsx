@@ -1,13 +1,12 @@
 import React from 'react';
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { UserProjectsContext } from '../../context/UserProjectContext';
 import { Link, NavLink } from 'react-router-dom';
 import { Blocks, ChevronDown, ChevronUp } from 'lucide-react';
 
 function ProjectsSideBar() {
   const [expandedProjects, setExpandedProjects] = useState(false);
-  const { userProjects, setUserProjects, updateProjects, user } =
-    useContext(UserProjectsContext);
+  const { userProjects } = useContext(UserProjectsContext);
   return (
     <div>
       <div className="flex relative">

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { supabase } from '../util/supabaseCalls';
 
@@ -7,6 +8,7 @@ function AddProject({ setShowProjectForm, updateProjects }) {
   const { user } = useUser();
   const [projectName, setProjectName] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +22,13 @@ function AddProject({ setShowProjectForm, updateProjects }) {
       .from('projects')
       .insert([{ projectname: projectName, user_id: user.id }]);
 
+    //find project id based on project name
+    const { data, error: error2 } = await supabase
+      .from('projects')
+      .select('project_id')
+      .eq('projectname', projectName)
+      .single();
+    const project_id = data.project_id;
     if (error) {
       setError('Failed to add project');
       console.error('Error creating project:', error);
@@ -28,6 +37,7 @@ function AddProject({ setShowProjectForm, updateProjects }) {
       setShowProjectForm(false);
       setProjectName('');
       updateProjects(user.id);
+      navigate(`/projects/${project_id}`);
     }
   };
 

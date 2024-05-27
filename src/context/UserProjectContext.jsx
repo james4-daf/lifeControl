@@ -7,6 +7,7 @@ export const UserProjectsContext = createContext();
 
 export const UserProjectsProvider = ({ children }) => {
   const [userProjects, setUserProjects] = useState([]);
+  const [projectTasks, setProjectTasks] = useState([]);
   const { user } = useUser();
 
   useEffect(() => {
@@ -20,7 +21,14 @@ export const UserProjectsProvider = ({ children }) => {
 
   return (
     <UserProjectsContext.Provider
-      value={{ userProjects, setUserProjects, updateProjects, user }}
+      value={{
+        userProjects,
+        setUserProjects,
+        updateProjects,
+        user,
+        projectTasks,
+        setProjectTasks,
+      }}
     >
       {children}
     </UserProjectsContext.Provider>

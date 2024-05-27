@@ -1,8 +1,7 @@
-import { useEffect, useState, useContext } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useState, useContext } from 'react';
+
 import { Link } from 'react-router-dom';
 import AddProject from './AddProject';
-import { getProjects } from '../util/supabaseCalls';
 import { UserProjectsContext } from '../context/UserProjectContext';
 
 function Projects() {
